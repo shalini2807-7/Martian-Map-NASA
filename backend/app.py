@@ -122,7 +122,7 @@ def route():
     a = (num("from_lat", -90, 90), num("from_lon"))
     b = (num("to_lat", -90, 90), num("to_lon"))
     steep = request.args.get("avoid_steep", "1") not in ("0", "false", "False")
-    result = plan_route(get_dem(), a, b, avoid_steep=steep, max_dim=150)
+    result = plan_route(get_dem(), a, b, avoid_steep=steep)
     result["dataset"] = get_dem().info()
     return jsonify(result)
 
