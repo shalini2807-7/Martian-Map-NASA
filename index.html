@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#101923" />
+  <title>Martian Map — Exploration Planner</title>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+:root{--bg:#101923;--panel:#17232e;--panel2:#1c2a36;--line:#2a3945;--text:#edf1f3;--muted:#93a2ad;--orange:#d78a61;--orange2:#f0ae80;--green:#7cb89a;--yellow:#d5b36e;--red:#cf806d}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px}button,select{font:inherit}.topbar{height:70px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 4.2%;background:#121d27}.brand{display:flex;align-items:center;gap:11px;color:inherit;text-decoration:none}.brand-mark{width:34px;height:34px;border:1px solid #b66e50;border-radius:10px;display:grid;place-items:center;color:var(--orange2);font:600 19px 'Space Grotesk';background:#332a2b}.brand b{font:600 13px 'Space Grotesk';letter-spacing:1.7px;display:block}.brand small{font:10px 'DM Mono';color:var(--muted);letter-spacing:1.5px}.top-meta,.coordinate-pill{font:10px 'DM Mono';letter-spacing:1px;color:#aab5bd;display:flex;align-items:center;gap:9px}.live-dot{width:7px;height:7px;background:#78b993;border-radius:50%;display:inline-block;box-shadow:0 0 9px #78b99366}.divider{height:13px;width:1px;background:var(--line)}.layout{max-width:1600px;margin:auto;padding:34px 4.2% 55px;display:grid;grid-template-columns:minmax(0,1.65fr) minmax(330px,.85fr);gap:26px}.section-heading{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:19px}.eyebrow{font:10px 'DM Mono';letter-spacing:1.5px;color:var(--orange2);margin:0 0 8px}.section-heading h1{font:600 27px 'Space Grotesk';letter-spacing:-.8px;margin:0}.subheading{color:var(--muted);margin:7px 0 0;font-size:13px}.coordinate-pill{border:1px solid var(--line);border-radius:20px;padding:8px 11px;white-space:nowrap}.map-shell,.card,.layer-panel{background:var(--panel);border:1px solid var(--line);border-radius:13px;overflow:hidden}.map-toolbar{height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-bottom:1px solid var(--line)}.map-tools{display:flex;gap:6px}.icon-button{width:30px;height:29px;border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:7px;cursor:pointer;font-size:17px}.icon-button:hover,.button:hover{filter:brightness(1.13)}.map-label{font:10px 'DM Mono';letter-spacing:1.4px;color:#c4a08a}.map-viewport{position:relative;background:#332a2b;overflow:hidden;touch-action:pan-y}.map-viewport svg{width:100%;height:auto;display:block;cursor:crosshair;transform-origin:center;transition:transform .18s ease}.map-legend{position:absolute;bottom:14px;left:14px;background:#111b24e8;border:1px solid #ffffff22;border-radius:8px;padding:9px 11px;display:flex;gap:14px;flex-wrap:wrap;font-size:10px;color:#d6dce0}.map-legend span{display:flex;align-items:center;gap:6px}.legend-dot{width:8px;height:8px;border-radius:50%;display:inline-block}.site-dot{background:#f1d6a8}.hazard-dot{background:#e9a16e}.legend-line{width:17px;height:2px;background:#8fd0bb;display:inline-block}.map-hint{position:absolute;right:14px;bottom:15px;color:#d2c1b7;font-size:10px;text-shadow:0 1px 3px #000}.layer-panel{margin-top:15px;padding:18px 19px}.panel-title{display:flex;justify-content:space-between;align-items:flex-start}.panel-title h2,.source-card h2{font:600 17px 'Space Grotesk';margin:0}.muted{color:var(--muted)}.small{font-size:11px}.layer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:17px}.layer-toggle{display:flex;gap:9px;align-items:center;cursor:pointer}.layer-toggle input{position:absolute;opacity:0}.toggle-ui{width:30px;height:17px;background:#34434d;border-radius:20px;position:relative;flex:none;transition:.2s}.toggle-ui:after{content:'';position:absolute;width:11px;height:11px;border-radius:50%;background:#a4b0b7;left:3px;top:3px;transition:.2s}.layer-toggle input:checked+.toggle-ui{background:#8b5945}.layer-toggle input:checked+.toggle-ui:after{left:16px;background:#ffe0c8}.layer-toggle b{display:block;font-size:11px;font-weight:600}.layer-toggle small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.data-note{font-size:10px;color:#a9b5bc;margin:17px 0 0;display:flex;gap:8px;line-height:1.5}.note-icon{width:15px;height:15px;border:1px solid #71818b;border-radius:50%;display:grid;place-items:center;flex:none;font:10px Georgia}.sidebar{display:flex;flex-direction:column;gap:14px;padding-top:0}.card{padding:18px}.selected-card{border-top:2px solid #b87352}.status-tag{font:9px 'DM Mono';letter-spacing:1px;border:1px solid #8d7058;color:#e6bd91;padding:5px 7px;border-radius:5px}.region-coords{font:10px 'DM Mono';color:var(--orange2);margin:8px 0 12px}.region-desc{font-size:12px;color:#b3bec5;line-height:1.55;margin:0 0 16px}.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.metric{background:var(--panel2);padding:11px;border-radius:8px}.metric span,.metric small{display:block;color:var(--muted);font-size:10px}.metric b{display:block;font:600 15px 'Space Grotesk';margin:5px 0 2px}.metric small{font:10px 'DM Mono'}.risk-track{height:5px;background:#35434b;border-radius:9px;margin:12px 0 13px;overflow:hidden}.risk-track span{height:100%;width:58%;display:block;background:var(--yellow);border-radius:9px;transition:width .25s}.risk-breakdown{display:grid;grid-template-columns:repeat(3,1fr);margin-bottom:15px}.risk-breakdown div{border-right:1px solid var(--line);padding-left:9px}.risk-breakdown div:first-child{padding-left:0}.risk-breakdown div:last-child{border:0}.risk-breakdown span{display:block;color:var(--muted);font-size:9px}.risk-breakdown b{font:500 13px 'DM Mono';display:block;margin-top:4px}.button{border:0;border-radius:7px;padding:10px 13px;cursor:pointer;font-size:11px;font-weight:600;transition:.15s}.button-primary{background:#bd7858;color:#171d20}.button-outline{background:transparent;border:1px solid #8d6b57;color:#e8c4aa}.button-quiet{background:transparent;border:1px solid var(--line);color:#c4cdd2}.button-small{padding:7px 10px;font-size:10px}.full{width:100%}.planner-icon{font-size:20px;color:var(--orange2)}.field-label{display:block;font-size:10px;color:#9fadb6;margin:14px 0 6px}.planner-card select{width:100%;padding:10px 11px;background:#111c25;color:#e6ecef;border:1px solid var(--line);border-radius:7px;outline:none}.planner-options{display:flex;flex-direction:column;gap:8px;margin:13px 0;color:#b5c0c7;font-size:10px}.planner-options input{accent-color:#c47d5b;margin:0 6px 0 0}.planner-card>.button{margin-top:3px}.route-result{border-top:1px solid var(--line);margin-top:15px;padding-top:13px}.hidden{display:none!important}.route-top{display:flex;justify-content:space-between;align-items:center;font-size:11px}.route-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:12px 0}.route-stats div{background:var(--panel2);padding:9px;border-radius:7px}.route-stats small{display:block;color:var(--muted);font-size:9px}.route-stats b{display:block;font:600 14px 'Space Grotesk';margin-top:4px}.route-advice{font-size:10px;line-height:1.5;color:#b4c0c6}.site-list{margin-top:9px}.site-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #293843;cursor:pointer}.site-row:last-child{border:0;padding-bottom:0}.site-row:hover .site-name{color:var(--orange2)}.site-name{font-size:11px;font-weight:600}.site-meta{font:9px 'DM Mono';color:var(--muted);margin-top:3px}.site-risk{font:10px 'DM Mono';color:#e0bd8e}.source-card p:not(.eyebrow){font-size:10px;color:#aab6bd;line-height:1.55}.source-links{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.source-links a{color:#d8a27f;text-decoration:none;font-size:10px}.source-links a:hover{text-decoration:underline}footer{border-top:1px solid var(--line);padding:17px 4.2%;display:flex;justify-content:space-between;color:#778792;font-size:10px}.dialog-head{display:flex;justify-content:space-between;align-items:flex-start}dialog{width:min(500px,calc(100% - 30px));background:#17232e;color:var(--text);border:1px solid #43515b;border-radius:13px;padding:23px;box-shadow:0 20px 80px #0009}dialog::backdrop{background:#060b10c9}dialog p,dialog li{font-size:12px;color:#b7c2c8;line-height:1.6}dialog h3{font:600 13px 'Space Grotesk'}dialog ul{padding-left:18px}.dialog-warning{border-left:2px solid #c58a64;padding:9px 12px;background:#2a2929}.site-marker{cursor:pointer}.site-marker circle{fill:#f0d6ae;stroke:#432f2c;stroke-width:3}.site-marker.selected circle{fill:#fff1d8;stroke:#fff;stroke-width:4}.site-marker text{font:600 13px Arial;fill:#fff1e4;paint-order:stroke;stroke:#4b2e2a;stroke-width:3px;stroke-linejoin:round}.hazard{fill:#e6a26f;fill-opacity:.18;stroke:#f1b27e;stroke-opacity:.62;stroke-width:2;stroke-dasharray:7 5}.hazard.rock{fill:#e5d2a2;fill-opacity:.18;stroke:#e9d3a0}.hazard.thermal{fill:#d86b55;fill-opacity:.22;stroke:#e28a72}.route-line{fill:none;stroke:#9fe0c8;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:12 7;filter:drop-shadow(0 1px 3px #16231f)}.route-point{fill:#a4e3c8;stroke:#203c34;stroke-width:3}
+.badge{display:inline-block;font:8px 'DM Mono';letter-spacing:.8px;padding:2px 5px;border-radius:4px;margin-left:6px;vertical-align:middle;white-space:nowrap}.badge-nasa{border:1px solid #5f9c80;color:#8fd3b2;background:#1b2f29}.badge-est{border:1px dashed #a98b5d;color:#e0bd8e;background:#2c2820}.basemap-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:17px;padding-top:14px;border-top:1px solid var(--line)}.basemap-row label{font-size:11px;font-weight:600}.basemap-row select{padding:7px 10px;background:#111c25;color:#e6ecef;border:1px solid var(--line);border-radius:7px;font-size:11px}.basemap-caption{font-size:10px;color:#a9b5bc;margin:9px 0 0;line-height:1.5}.map-credit{position:absolute;right:14px;top:10px;font:9px 'DM Mono';color:#e9ddd4;background:#111b24cc;border:1px solid #ffffff22;border-radius:6px;padding:4px 7px;pointer-events:none}.badge-ref{border:1px solid #8a8f94;color:#c0c7cc;background:#232b31}.badge-load{border:1px solid #6d7f8c;color:#a9bac6;background:#1e2a33}.retry-btn{background:none;border:0;color:#e8c4aa;font:10px 'DM Mono';cursor:pointer;padding:0;text-decoration:underline;margin-top:4px}.map-status{position:absolute;left:14px;top:10px;font:9px 'DM Mono';letter-spacing:.6px;border-radius:6px;padding:4px 8px;pointer-events:none;border:1px solid #ffffff22;background:#111b24cc;color:#e9ddd4;display:flex;align-items:center;gap:6px}.map-status:before{content:'';width:7px;height:7px;border-radius:50%;background:#a4b0b7}.map-status.ok:before{background:#78b993;box-shadow:0 0 7px #78b99388}.map-status.load:before{background:#d5b36e}.map-status.partial:before{background:#d5b36e}.map-status.fallback:before{background:#cf806d}.map-status.est:before{background:#a98b5d}.data-legend{margin-top:14px;padding-top:13px;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;gap:9px 16px}.data-legend div{font-size:10px;color:#b4c0c6;line-height:1.45}.data-legend .badge{margin:0 6px 0 0}.ds{border:1px solid var(--line);border-radius:8px;padding:9px 10px;margin-top:9px;background:var(--panel2)}.ds>b{display:block;font:600 11px 'Space Grotesk';color:#edf1f3}.ds dl{display:grid;grid-template-columns:74px 1fr;gap:5px 8px;margin:7px 0 0}.ds dt{font:9px 'DM Mono';letter-spacing:.5px;color:var(--muted);padding-top:1px}.ds dd{margin:0;font-size:10px;color:#b4c0c6;line-height:1.45;word-break:break-word}.ds dd a{color:#d8a27f}.method-sub{margin:12px 0 0;font-size:10px;color:#aab6bd;line-height:1.55}.method-sub b{color:#dfe6ea}.dem-panel{margin:12px 0 4px;padding:10px 11px;border:1px solid var(--line);border-radius:9px;background:#0f1a22}.dem-head{display:flex;justify-content:space-between;align-items:center;gap:8px;font:9px 'DM Mono';letter-spacing:.7px;color:var(--muted);margin-bottom:8px;flex-wrap:wrap}.dem-panel dl{display:grid;grid-template-columns:72px 1fr;gap:5px 8px;margin:0}.dem-panel dt{font:9px 'DM Mono';color:var(--muted);letter-spacing:.4px;padding-top:1px}.dem-panel dd{margin:0;font-size:10px;color:#c6d0d5;line-height:1.45;word-break:break-word}.dem-note{margin:7px 0 0;font-size:9.5px;color:#c9ad82;line-height:1.45}.backend-state{border-radius:5px;padding:2px 6px;border:1px solid #6d7f8c;color:#a9bac6;letter-spacing:.4px}.backend-state.ok{border-color:#5f9c80;color:#8fd3b2}.backend-state.warn{border-color:#cf806d;color:#f0a794}.backend-state.off{border-color:#a98b5d;color:#e0bd8e}.badge-syn{border:1px solid #cf806d;color:#f0a794;background:#34211e}.route-terrain{margin-top:10px}.route-mode{font:9px 'DM Mono';letter-spacing:.5px;color:#aab6bd;margin:0 0 8px;line-height:1.5}.route-mode.ok{color:#8fd3b2}.route-mode.warn{color:#f0a794}.route-profile{width:100%;height:58px;margin-top:8px;background:#0f1a22;border:1px solid var(--line);border-radius:7px;display:block}.profile-cap{display:block;font-size:9px;color:#8fa0a9;margin-top:4px;line-height:1.4}.est-caption{font:9px 'DM Mono';color:#c9ad82;letter-spacing:.6px;margin:-4px 0 12px}.method-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:10px}.method-table th,.method-table td{text-align:left;vertical-align:top;padding:7px 6px;border-bottom:1px solid #293843;color:#b4c0c6;line-height:1.45}.method-table th{font:9px 'DM Mono';letter-spacing:.8px;color:var(--orange2);font-weight:400}.source-card details{margin-top:12px}.source-card summary{cursor:pointer;font-size:11px;font-weight:600;color:#e8c4aa}.source-card ol{padding-left:16px;margin:8px 0 0;font-size:10px;color:#aab6bd;line-height:1.55}
+@media(max-width:1050px){.layout{grid-template-columns:1fr}.sidebar{display:grid;grid-template-columns:1fr 1fr}.source-card{grid-column:span 2}.section-heading{align-items:flex-start;gap:12px;flex-direction:column}.coordinate-pill{display:none}}
+@media(max-width:650px){.map-status{position:static;border-radius:0;border:0;border-bottom:1px solid #ffffff22}.map-credit{display:none}.data-legend{grid-template-columns:1fr}.topbar{padding:0 16px;height:60px}.top-meta{display:none}.layout{padding:23px 14px 35px;gap:17px}.section-heading h1{font-size:23px}.layer-grid{grid-template-columns:1fr 1fr;row-gap:15px}.sidebar{display:flex}.source-card{grid-column:auto}.map-legend{position:static;border-radius:0;border:0;border-top:1px solid #ffffff22}.map-hint{display:none}.map-viewport svg{min-height:230px}.coordinate-pill{display:none}footer{padding:14px;gap:8px;flex-direction:column}.map-label{font-size:8px}.button-quiet{font-size:10px;padding:8px}}
+
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Martian Map home">
+      <span class="brand-mark">M</span>
+      <span><b>MARTIAN MAP</b><small>EXPLORATION PLANNER</small></span>
+    </a>
+    <div class="top-meta"><span class="live-dot"></span> MARS SURFACE WORKSPACE <span class="divider"></span> SOL 001</div>
+    <button class="button button-quiet" id="aboutBtn">About this project</button>
+  </header>
+
+  <main class="layout">
+    <section class="map-column">
+      <div class="section-heading">
+        <div><p class="eyebrow">PLANETARY OVERVIEW</p><h1>Explore Mars with context.</h1>
+        <p class="subheading">Compare candidate regions, review environmental factors and sketch a safer traverse.</p></div>
+        <div class="coordinate-pill"><span class="live-dot"></span> EQUIRECTANGULAR VIEW</div>
+      </div>
+
+      <div class="map-shell">
+        <div class="map-toolbar">
+          <div class="map-tools">
+            <button class="icon-button" id="zoomIn" aria-label="Zoom in">+</button>
+            <button class="icon-button" id="zoomOut" aria-label="Zoom out">−</button>
+            <button class="icon-button" id="resetView" aria-label="Reset map view">⌂</button>
+          </div>
+          <div class="map-label" id="mapLabel">MARS · NASA MOLA ELEVATION</div>
+          <button class="button button-small button-outline" id="clearRoute">Clear route</button>
+        </div>
+        <div class="map-viewport" id="mapViewport">
+          <svg id="marsMap" viewBox="0 0 1200 600" role="img" aria-label="Interactive map of Mars using NASA Mars Trek imagery with exploration sites and illustrative environmental overlays">
+            <defs>
+              <linearGradient id="marsBase" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#b86d4c"/><stop offset=".45" stop-color="#8f4939"/><stop offset="1" stop-color="#542f32"/>
+              </linearGradient>
+              <radialGradient id="terrainGlow"><stop stop-color="#e4a16c" stop-opacity=".72"/><stop offset="1" stop-color="#6b3433" stop-opacity="0"/></radialGradient>
+              <pattern id="grid" width="100" height="75" patternUnits="userSpaceOnUse">
+                <path d="M100 0H0V75" fill="none" stroke="#f4d5bd" stroke-opacity=".16" stroke-width="1"/>
+              </pattern>
+              <filter id="soft"><feGaussianBlur stdDeviation="16"/></filter>
+              <clipPath id="mapClip"><rect x="0" y="0" width="1200" height="600" rx="10"/></clipPath>
+            </defs>
+            <g clip-path="url(#mapClip)">
+              <rect width="1200" height="600" fill="url(#marsBase)"/>
+              <g id="illustrativeTerrain"><g opacity=".6" filter="url(#soft)">
+                <ellipse cx="190" cy="150" rx="250" ry="120" fill="#d18b5d"/>
+                <ellipse cx="570" cy="390" rx="300" ry="180" fill="#4d3335"/>
+                <ellipse cx="950" cy="160" rx="240" ry="130" fill="#d99a6d"/>
+                <ellipse cx="1020" cy="490" rx="280" ry="140" fill="#3c3036"/>
+              </g>
+              <g fill="none" stroke="#e5a57b" stroke-opacity=".22">
+                <path d="M-20 180 Q120 90 260 180T540 170T820 190T1220 140" stroke-width="18"/>
+                <path d="M-10 420 Q180 350 330 430T650 400T950 420T1230 360" stroke-width="12"/>
+                <path d="M130 0 Q230 150 180 300T250 620 M750 -20Q680 150 760 300T710 620" stroke-width="8"/>
+              </g>
+              <g fill="#3c3035" opacity=".36">
+                <ellipse cx="300" cy="300" rx="95" ry="38"/><ellipse cx="780" cy="250" rx="130" ry="48"/>
+                <ellipse cx="1030" cy="350" rx="75" ry="34"/><ellipse cx="520" cy="100" rx="48" ry="24"/>
+              </g>
+              <g fill="none" stroke="#f1c19a" stroke-opacity=".28" stroke-width="2">
+                <ellipse cx="300" cy="300" rx="110" ry="48"/><ellipse cx="780" cy="250" rx="150" ry="62"/>
+                <ellipse cx="1030" cy="350" rx="90" ry="42"/>
+              </g>
+              </g>
+              <g id="tileLayer"></g>
+              <rect width="1200" height="600" fill="url(#grid)"/>
+              <g id="hazardLayer"></g>
+              <g id="routeLayer"></g>
+              <g id="siteLayer"></g>
+              <g fill="#f8ddc7" opacity=".75" font-size="12" font-family="Arial">
+                <text x="18" y="24">90°N</text><text x="18" y="300">0°</text><text x="18" y="585">90°S</text>
+                <text x="190" y="585">120°W</text><text x="490" y="585">30°W</text><text x="790" y="585">60°E</text><text x="1090" y="585">150°E</text>
+              </g>
+            </g>
+          </svg>
+          <div class="map-legend">
+            <span><i class="legend-dot site-dot"></i> Science site</span>
+            <span class="badge badge-nasa" style="margin:0">NASA IMAGERY</span>
+            <span><i class="legend-dot hazard-dot"></i> Hazard zone <span class="badge badge-est" style="margin-left:3px">ILLUSTRATIVE</span></span>
+            <span><i class="legend-line"></i> Planned traverse</span>
+          </div>
+          <div class="map-status load" id="mapStatus" role="status" aria-live="polite">Loading NASA imagery…</div>
+          <div class="map-credit" id="mapCredit">IMAGERY: NASA/JPL-Caltech/USGS · MARS TREK</div>
+          <div class="map-hint">Select a marker to inspect a region · Scroll to zoom</div>
+        </div>
+      </div>
+
+      <div class="layer-panel">
+        <div class="panel-title"><div><p class="eyebrow">MAP CONTROLS</p><h2>Data layers</h2></div><span class="muted small">Toggle overlays</span></div>
+        <div class="layer-grid">
+          <label class="layer-toggle"><input type="checkbox" id="layerSites" checked><span class="toggle-ui"></span><span><b>Exploration sites</b><small>Rover & mission locations</small></span></label>
+          <label class="layer-toggle"><input type="checkbox" id="layerSlope" checked><span class="toggle-ui"></span><span><b>Slope risk</b><small>Terrain steepness zones</small></span></label>
+          <label class="layer-toggle"><input type="checkbox" id="layerRock" checked><span class="toggle-ui"></span><span><b>Rock density</b><small>Mobility concern areas</small></span></label>
+          <label class="layer-toggle"><input type="checkbox" id="layerThermal"><span class="toggle-ui"></span><span><b>Thermal context</b><small>Temperature variability</small></span></label>
+        </div>
+        <div class="basemap-row">
+          <label for="basemapSelect">Basemap <span class="badge badge-nasa">NASA MARS TREK</span></label>
+          <select id="basemapSelect">
+            <option value="mola" selected>MOLA colorized elevation (NASA MGS)</option>
+            <option value="viking">Viking color mosaic (NASA/USGS)</option>
+            <option value="illustrative">Illustrative stylized map (original)</option>
+          </select>
+        </div>
+        <p class="basemap-caption" id="basemapCaption"></p>
+        <div class="data-legend" aria-label="Data labels">
+          <div><span class="badge badge-nasa">NASA IMAGERY</span>Basemap tiles from NASA Mars Trek (MOLA colorized relief / Viking mosaic).</div>
+          <div><span class="badge badge-nasa">NASA-DERIVED ELEVATION</span>Numerical MOLA height and DEM-derived slope at each site (backend raster sampling, or live image-service query); approximate reference only if all queries fail.</div>
+          <div><span class="badge badge-est">ESTIMATED</span>Terrain risk, slope/rock/thermal scores and route risk index (heuristic demo values).</div>
+          <div><span class="badge badge-est">ILLUSTRATIVE</span>Hazard overlay zones drawn on the map; not measured hazards.</div>
+        </div>
+        <p class="data-note"><span class="note-icon">i</span> Hazard overlays are illustrative planning layers in this prototype, estimated demonstration scores, not live or validated NASA hazard measurements. Only the basemap and elevation values are NASA data. See Data & methodology.</p>
+      </div>
+    </section>
+
+    <aside class="sidebar">
+      <section class="card selected-card">
+        <div class="panel-title"><div><p class="eyebrow">REGION INSPECTOR</p><h2 id="selectedName">Jezero Crater</h2></div><span class="status-tag" id="siteStatus">CANDIDATE</span></div>
+        <p class="region-coords" id="selectedCoords">18.38°N · 77.58°E</p>
+        <p class="region-desc" id="selectedDesc">An ancient lake basin and the landing region of NASA's Perseverance rover. A compelling location for studying past water activity.</p>
+        <div class="metric-grid">
+          <div class="metric"><span>Terrain risk<span class="badge badge-est">ESTIMATED</span></span><b id="riskValue">Moderate</b><small id="riskScore">58 / 100</small></div>
+          <div class="metric"><span>Elevation (NASA MOLA-derived)<span class="badge badge-load" id="elevBadge">LOADING…</span></span><b id="elevationValue">—</b><small id="elevationNote">Querying NASA…</small><button class="retry-btn hidden" id="elevRetry">Retry NASA query</button></div>
+        </div>
+        <div class="dem-panel" id="demPanel">
+          <div class="dem-head"><span>ELEVATION DATA DETAILS</span><span class="backend-state" id="backendState">Checking backend…</span></div>
+          <dl>
+            <dt>Data source</dt><dd id="demSource">—</dd>
+            <dt>Coordinates</dt><dd id="demCoords">—</dd>
+            <dt>Retrieval</dt><dd id="demRetrieval">—</dd>
+            <dt>DEM slope</dt><dd id="demSlope">—</dd>
+          </dl>
+          <p class="dem-note" id="demNote"></p>
+        </div>
+        <div class="risk-track"><span id="riskBar"></span></div>
+        <p class="est-caption">ESTIMATED DEMONSTRATION SCORES · NOT NASA MEASUREMENTS</p>
+        <div class="risk-breakdown">
+          <div><span>Slope exposure</span><b id="slopeScore">42</b></div>
+          <div><span>Rock exposure</span><b id="rockScore">61</b></div>
+          <div><span>Thermal concern</span><b id="thermalScore">55</b></div>
+        </div>
+        <button class="button button-primary full" id="addStart">Set as route start</button>
+      </section>
+
+      <section class="card planner-card">
+        <div class="panel-title"><div><p class="eyebrow">TRAVERSE DESIGN</p><h2>Route planner</h2></div><span class="planner-icon">↗</span></div>
+        <label class="field-label" for="startSite">Starting region</label>
+        <select id="startSite"></select>
+        <label class="field-label" for="endSite">Destination</label>
+        <select id="endSite"></select>
+        <div class="planner-options">
+          <label><input type="checkbox" id="avoidSlope" checked> Avoid steep terrain</label>
+          <label><input type="checkbox" id="avoidRock" checked> Minimize rocky zones</label>
+        </div>
+        <button class="button button-primary full" id="planRoute">Generate traverse</button>
+        <div class="route-result hidden" id="routeResult">
+          <div class="route-top"><b>Traverse overview</b><span class="status-tag" id="routeStatus">DRAFT</span></div>
+          <div class="route-stats"><div><small>Distance</small><b id="routeDistance">—</b></div><div><small>Risk index (est.)</small><b id="routeRisk">—</b></div><div><small>Waypoints</small><b id="routeStops">—</b></div></div>
+          <div class="route-terrain" id="routeTerrain">
+            <p class="route-mode" id="routeMode"></p>
+            <div class="route-stats hidden" id="routeTerrainStats"><div><small>Max slope (grid)</small><b id="routeMaxSlope">—</b></div><div><small>Elevation gain</small><b id="routeGain">—</b></div><div><small>Cost vs straight</small><b id="routeSaving">—</b></div></div>
+            <svg id="routeProfile" class="route-profile hidden" viewBox="0 0 300 58" preserveAspectRatio="none" role="img" aria-label="Elevation profile of the planned route"></svg>
+            <small class="profile-cap hidden" id="routeProfileCap"></small>
+          </div>
+          <p id="routeAdvice" class="route-advice"></p>
+          <button class="button button-outline full" id="exportPlan">Export mission plan ↓</button>
+        </div>
+      </section>
+
+      <section class="card sites-card">
+        <div class="panel-title"><div><p class="eyebrow">FIELD DIRECTORY</p><h2>Notable regions</h2></div><span class="muted small">5 locations</span></div>
+        <div id="siteList" class="site-list"></div>
+      </section>
+
+      <section class="card source-card">
+        <p class="eyebrow">RESEARCH NOTES</p><h2>Data & methodology</h2>
+        <p>Martian Map combines mission context with a transparent, interactive planning prototype. Data is labelled by origin: <span class="badge badge-nasa" style="margin-left:0">NASA DATA</span> is real NASA imagery/elevation; <span class="badge badge-est" style="margin-left:0">ESTIMATED</span> is a heuristic demonstration score. Risk scores are not operational safety assessments.</p>
+        <details open>
+          <summary>How each source informs the exploration decision</summary>
+          <table class="method-table">
+            <tr><th>SOURCE</th><th>TYPE</th><th>ROLE IN DECISION</th></tr>
+            <tr><td>NASA Mars Trek · MGS MOLA colorized relief (WMTS tiles)</td><td><span class="badge badge-nasa" style="margin:0">NASA IMAGERY</span></td><td>Shows real global topography so users see where a site sits relative to lowlands, highlands and canyons.</td></tr>
+            <tr><td>NASA Mars Trek · Viking MDIM 2.1 color mosaic</td><td><span class="badge badge-nasa" style="margin:0">NASA IMAGERY</span></td><td>Gives surface appearance (albedo, craters, dust) for visual context.</td></tr>
+            <tr><td>MOLA DEM elevation and slope: raster sampling by the local backend, or a live image-service query</td><td><span class="badge badge-nasa" style="margin:0">NASA-DERIVED</span></td><td>Measured height retrieved from the DEM; very high or deep locations are a first flag for entry, descent and traverse difficulty. If the query fails, an approximate reference is shown and labelled as such.</td></tr>
+            <tr><td>Slope / rock / thermal scores and route risk index</td><td><span class="badge badge-est" style="margin:0">ESTIMATED</span> <span class="badge badge-est" style="margin:0">ILLUSTRATIVE zones</span></td><td>Heuristic 0–100 demo values that let users compare sites; they should be replaced by real hazard products.</td></tr>
+          </table>
+          <ol>
+            <li>Inspect the NASA basemap and elevation of each candidate region.</li>
+            <li>Compare the estimated slope, rock and thermal scores alongside each site's overall terrain-risk score. These are preset demonstration values; they are not computed from the NASA data.</li>
+            <li>Generate a traverse: distance is great-circle; route risk averages the two sites' scores, adjusted by the chosen avoidance options. Exact formula: route risk = mean of the two endpoint risk scores − 8 (if "Avoid steep terrain") − 5 (if "Minimize rocky zones") + 0.08 × latitude difference in degrees, rounded and limited to 8–99.</li>
+            <li>Treat the output as a shortlist to validate with high-resolution data (e.g. HiRISE, CTX) before any real decision.</li>
+          </ol>
+        </details>
+
+        <details>
+          <summary>Dataset reference (name, resolution, source)</summary>
+          <div class="ds"><b>1 · Basemap (default): MOLA colorized relief</b><dl>
+            <dt>DATASET</dt><dd>Mars MGS MOLA Global Color Shaded Relief 463m (NASA Trek layer <code>Mars_MGS_MOLA_ClrShade_merge_global_463m</code>)</dd>
+            <dt>RESOLUTION</dt><dd>128 pixels/degree, about 463 m/pixel at the equator; shown at WMTS zoom 3</dd>
+            <dt>SOURCE</dt><dd><a href="https://astrogeology.usgs.gov/search/map/mars_mgs_mola_global_color_shaded_relief_463m" target="_blank" rel="noopener">USGS Astropedia ↗</a> · served via <a href="https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=mars" target="_blank" rel="noopener">NASA Trek WMTS ↗</a></dd>
+            <dt>RETRIEVAL</dt><dd>Live tiles at page load. Offline: illustrative fallback.</dd></dl></div>
+          <div class="ds"><b>2 · Basemap (alternative): Viking color mosaic</b><dl>
+            <dt>DATASET</dt><dd>Viking MDIM 2.1 Colorized Global Mosaic (Trek layer <code>Viking_MDIM21_ClrMosaic_global_232m</code>)</dd>
+            <dt>RESOLUTION</dt><dd>about 232 m/pixel</dd>
+            <dt>SOURCE</dt><dd><a href="https://trek.nasa.gov/tiles/Mars/EQ/Viking_MDIM21_ClrMosaic_global_232m/1.0.0/WMTSCapabilities.xml" target="_blank" rel="noopener">NASA Trek WMTS capabilities ↗</a></dd>
+            <dt>RETRIEVAL</dt><dd>Live tiles when selected.</dd></dl></div>
+          <div class="ds"><b>3 · Site elevation: MOLA DEM</b><dl>
+            <dt>DATASET</dt><dd>Mars MGS MOLA DEM 463m (from MOLA MEGDR gridded data; USGS Astrogeology / NASA GSFC)</dd>
+            <dt>RESOLUTION</dt><dd>128 pixels/degree, about 463 m/pixel, 16-bit. Vertical uncertainty at least ±3 m; heights are relative to the Mars areoid (global range about −8,200 to +21,229 m).</dd>
+            <dt>SOURCE</dt><dd><a href="https://astrogeology.usgs.gov/search/map/mars_mgs_mola_dem_463m" target="_blank" rel="noopener">USGS Astropedia ↗</a> · <a href="https://pds-geosciences.wustl.edu/missions/mgs/megdr.html" target="_blank" rel="noopener">NASA PDS MEGDR ↗</a></dd>
+            <dt>RETRIEVAL</dt><dd><b>Live</b> query at page load. If the Trek MOLA DEM is unavailable the app tries the MOLA + MEX HRSC blended 200 m DEM (Trek, then an Esri-hosted USGS copy); the Region Inspector names the source that answered. If all fail, <b>static approximate reference values</b> are shown, labelled "NASA-derived reference · approximate".</dd></dl></div>
+          <div class="ds"><b>4 · Risk scores and routes: not NASA data</b><dl>
+            <dt>DATASET</dt><dd>Project-authored heuristic demonstration values</dd>
+            <dt>RETRIEVAL</dt><dd>Static, built into the page; labelled ESTIMATED / ILLUSTRATIVE.</dd></dl></div>
+        </details>
+        <details>
+          <summary>Backend: elevation, DEM slope and terrain routing</summary>
+          <p class="method-sub"><b>Elevation.</b> A small Python (Flask) service opens the USGS "Mars MGS MOLA DEM 463m" GeoTIFF and returns the height of the pixel covering a site's latitude/longitude (pixel column = ⌊(lon + 180) × 128⌋, row = ⌊(90 − lat) × 128⌋). <b>Slope.</b> Computed from the 3×3 neighbouring native cells with Horn's method, using the true cell size in metres at that latitude. This is NASA-derived and separate from the estimated "Slope exposure" score, which is unchanged. <b>Route.</b> A least-cost (A*) search over a block-averaged copy of the DEM, then smoothed into straight legs. A step costs its length × (1 + (slope along the step ÷ 3°)² + ½ (cell slope ÷ 3°)²) with "Avoid steep terrain" on (8° reference when off); steps steeper than 20° (30° when off) or into no-data cells are not allowed. The direct great-circle line is scored with the same cost model and the cheaper one is returned. <b>Limits.</b> Slopes are grid-scale averages over several kilometres, so local slopes, rocks, sand and thermal conditions are not captured; "Minimize rocky zones" affects only the estimated risk index, not the path. Without the backend the app shows the original straight-line draft.</p>
+        </details>
+        <details>
+          <summary>How coordinates are matched to elevation</summary>
+          <p class="method-sub">Each site keeps its fixed latitude/longitude (decimal degrees, east-positive longitude). The app sends that point to the DEM image service's <i>identify</i> operation, which returns the value of the single DEM pixel (about 463 m across) covering the point; nothing is averaged or interpolated. Services differ in longitude convention, so the app tries −180…180 first, then 0…360. Returned values outside −9,000…+22,000 m are rejected as invalid. Because the result is one cell, it can differ from published landing-site elevations and does not describe the local slope or relief.</p>
+        </details>
+        <details>
+          <summary>How NASA data influences exploration decisions</summary>
+          <p class="method-sub"><b>Imagery</b> gives visual context for where a candidate sits (basins, highlands, canyons). <b>Elevation</b> is shown beside the estimated risk so a person can spot extreme depth or height (for example Olympus Mons) and ask for closer study. NASA data is <b>not an input to the risk formulas</b>: terrain-risk, slope, rock and thermal scores are preset demonstration values, and route risk uses only the formula above. The output is a shortlist to validate with high-resolution products (HiRISE, CTX), not an operational decision.</p>
+        </details>
+        <div class="source-links">
+          <a href="https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=mars" target="_blank" rel="noopener">NASA Trek WMTS API ↗</a>
+          <a href="https://mars.nasa.gov/mars2020/" target="_blank" rel="noopener">NASA Mars 2020 mission ↗</a>
+          <a href="https://pds.nasa.gov/" target="_blank" rel="noopener">NASA Planetary Data System ↗</a>
+          <a href="https://astrogeology.usgs.gov/" target="_blank" rel="noopener">USGS Astrogeology ↗</a>
+          <a href="https://trek.nasa.gov/mars/" target="_blank" rel="noopener">NASA Mars Trek ↗</a>
+          <a href="https://pds-geosciences.wustl.edu/missions/mgs/megdr.html" target="_blank" rel="noopener">MOLA MEGDR (PDS) ↗</a>
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <footer><span>Martian Map · Space Apps 2026 prototype</span><span>For research and educational exploration · Not for operational mission decisions</span></footer>
+
+  <dialog id="aboutDialog">
+    <div class="dialog-head"><div><p class="eyebrow">PROJECT OVERVIEW</p><h2>About Martian Map</h2></div><button class="icon-button" id="closeAbout">×</button></div>
+    <p>Martian Map is an interactive concept for exploring candidate regions on Mars and thinking through the factors that influence a surface traverse.</p>
+    <h3>What you can do</h3>
+    <ul><li>Inspect five notable Mars regions and their mission context.</li><li>Switch between NASA Mars Trek basemaps (MOLA elevation, Viking color) and toggle illustrative slope, rock and thermal overlays.</li><li>Generate a draft route and compare a simple risk index.</li><li>Export a mission-plan JSON file for further analysis.</li></ul>
+    <p class="dialog-warning">Important: the basemap tiles and site elevations come from NASA datasets (Mars Trek / MGS MOLA). Hazard overlays, risk scores and routes are clearly labelled illustrative estimates. This prototype does not use live telemetry or replace validated elevation, imagery, radiation or weather products.</p>
+  </dialog>
+  <script>
+const sites = [
+ {id:"jezero",elev_m:-2600,elev_label:"≈ −2,600 m",elev_ctx:"Crater floor / delta region",name:"Jezero Crater",lat:18.38,lon:77.58,desc:"An ancient lake basin and the landing region of NASA's Perseverance rover. A compelling location for studying past water activity.",risk:58,slope:42,rock:61,thermal:55,elevation:"Lowland",context:"Perseverance rover · Mars 2020"},
+ {id:"gale",elev_m:-4500,elev_label:"≈ −4,500 m",elev_ctx:"Crater floor",name:"Gale Crater",lat:-5.4,lon:137.8,desc:"A large impact crater explored by the Curiosity rover. Mount Sharp preserves a record of changing environments over time.",risk:46,slope:38,rock:49,thermal:52,elevation:"Crater floor",context:"Curiosity rover · Mars Science Laboratory"},
+ {id:"olympus",elev_m:21229,elev_label:"≈ +21,200 m",elev_ctx:"Summit (global MOLA maximum)",name:"Olympus Mons",lat:18.65,lon:-133.8,desc:"The Solar System's largest known volcano. Its immense scale and volcanic terrain make it an important geological study area.",risk:79,slope:86,rock:62,thermal:44,elevation:"High volcanic province",context:"Orbital geological observations"},
+ {id:"valles",elev_m:-4000,elev_label:"≈ −4,000 m",elev_ctx:"Canyon floor region",name:"Valles Marineris",lat:-13.9,lon:-59.2,desc:"A vast canyon system with dramatic relief. Steep slopes and complex terrain make traverse planning especially important.",risk:88,slope:94,rock:71,thermal:58,elevation:"Canyon system",context:"Orbital imaging & topography"},
+ {id:"arcadia",elev_m:-3500,elev_label:"≈ −3,500 m",elev_ctx:"Northern plains",name:"Arcadia Planitia",lat:46.7,lon:175.0,desc:"A broad northern plains region of interest for subsurface-ice studies and future exploration planning.",risk:39,slope:24,rock:35,thermal:58,elevation:"Northern plains",context:"Orbital ice investigations"}
+];
+const $=id=>document.getElementById(id);
+let selected=sites[0], zoom=1, route=null;
+const svgNS="http://www.w3.org/2000/svg";
+function xy(lat,lon){return {x:(lon+180)/360*1200,y:(90-lat)/180*600};}
+function el(tag,attrs,parent){const n=document.createElementNS(svgNS,tag);Object.entries(attrs||{}).forEach(([k,v])=>n.setAttribute(k,v));parent.appendChild(n);return n;}
+function drawHazards(){
+ const g=$("hazardLayer");g.innerHTML="";
+ if($("layerSlope").checked){
+  [[-132,18,42,24],[ -59,-14,55,31],[85,17,34,20]].forEach(([lon,lat,rx,ry])=>{let p=xy(lat,lon);el("ellipse",{cx:p.x,cy:p.y,rx:rx*3.33,ry:ry*1.67,class:"hazard"},g)});
+ }
+ if($("layerRock").checked){
+  [[-15,-5,24,17],[137,-5,28,18],[78,18,20,14]].forEach(([lon,lat,rx,ry])=>{let p=xy(lat,lon);el("ellipse",{cx:p.x,cy:p.y,rx:rx*3.33,ry:ry*1.67,class:"hazard rock"},g)});
+ }
+ if($("layerThermal").checked){
+  [[175,47,38,20],[-35,-48,42,24]].forEach(([lon,lat,rx,ry])=>{let p=xy(lat,lon);el("ellipse",{cx:p.x,cy:p.y,rx:rx*3.33,ry:ry*1.67,class:"hazard thermal"},g)});
+ }
+}
+function drawSites(){
+ const g=$("siteLayer");g.innerHTML="";
+ if(!$("layerSites").checked)return;
+ sites.forEach(s=>{const p=xy(s.lat,s.lon),group=el("g",{class:"site-marker"+(selected.id===s.id?" selected":""),tabindex:"0",role:"button","aria-label":s.name},g);
+  el("circle",{cx:p.x,cy:p.y,r:selected.id===s.id?9:7},group);
+  const t=el("text",{x:p.x+12,y:p.y-10},group);t.textContent=s.name;
+  group.addEventListener("click",()=>selectSite(s));
+  group.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();selectSite(s)}});
+ });
+}
+function drawRoute(){
+ const g=$("routeLayer");g.innerHTML="";if(!route)return;
+ if(route.terrain_based){drawTerrainRoute(g);return}
+ const points=(route.points||route.waypoints.map(w=>({lat:w.latitude,lon:w.longitude}))).map(p=>xy(p.lat,p.lon));
+ // Split across map edge when crossing the longitude seam.
+ const path=points.map(p=>`${p.x},${p.y}`).join(" ");
+ el("polyline",{points:path,class:"route-line"},g);
+ points.forEach(p=>el("circle",{cx:p.x,cy:p.y,r:6,class:"route-point"},g));
+}
+function drawTerrainRoute(g){
+ const pts=route.path||[];let seg=[];
+ const flush=()=>{if(seg.length>1)el("polyline",{points:seg.map(p=>`${p.x},${p.y}`).join(" "),class:"route-line"},g);seg=[]};
+ pts.forEach((p,i)=>{if(i&&Math.abs(p[1]-pts[i-1][1])>180)flush();seg.push(xy(p[0],p[1]))}); // split at the +/-180 seam
+ flush();
+ route.waypoints.forEach(w=>{const p=xy(w.latitude,w.longitude);el("circle",{cx:p.x,cy:p.y,r:6,class:"route-point"},g)});
+}
+function redraw(){drawHazards();drawSites();drawRoute();}
+function selectSite(s){
+ selected=s;$("selectedName").textContent=s.name;$("selectedCoords").textContent=`${Math.abs(s.lat).toFixed(2)}°${s.lat>=0?"N":"S"} · ${Math.abs(s.lon).toFixed(2)}°${s.lon>=0?"E":"W"}`;
+ $("selectedDesc").textContent=s.desc;$("riskValue").textContent=s.risk<40?"Low":s.risk<70?"Moderate":"High";
+ $("riskScore").textContent=`${s.risk} / 100`;$("riskBar").style.width=s.risk+"%";$("riskBar").style.background=s.risk<40?"#7cb89a":s.risk<70?"#d5b36e":"#cf806d";
+ $("slopeScore").textContent=s.slope;$("rockScore").textContent=s.rock;$("thermalScore").textContent=s.thermal;showElevation(s);
+ $("siteStatus").textContent=s.risk>=75?"CAUTION":"CANDIDATE";
+ redraw();renderSiteList();
+}
+function renderSiteList(){
+ $("siteList").innerHTML="";
+ sites.forEach(s=>{const row=document.createElement("div");row.className="site-row";row.innerHTML=`<div><div class="site-name">${s.name}</div><div class="site-meta">${s.context}</div></div><span class="site-risk">${s.risk}/100 <span class="badge badge-est" style="margin-left:2px">EST.</span></span>`;row.addEventListener("click",()=>selectSite(s));$("siteList").appendChild(row)});
+}
+function fillSelects(){
+ ["startSite","endSite"].forEach(id=>{const select=$(id);select.innerHTML="";sites.forEach(s=>{const o=document.createElement("option");o.value=s.id;o.textContent=s.name;select.appendChild(o)})});
+ $("startSite").value="jezero";$("endSite").value="gale";
+}
+function distance(a,b){const r=3389.5,rad=x=>x*Math.PI/180, dLat=rad(b.lat-a.lat),dLon=rad(b.lon-a.lon);const h=Math.sin(dLat/2)**2+Math.cos(rad(a.lat))*Math.cos(rad(b.lat))*Math.sin(dLon/2)**2;return 2*r*Math.asin(Math.sqrt(h));}
+function makeRoute(){
+ const a=sites.find(s=>s.id===$("startSite").value),b=sites.find(s=>s.id===$("endSite").value);
+ if(a.id===b.id){$("routeAdvice").textContent="Choose two different regions to create a traverse.";return}
+ const midpoint={lat:(a.lat+b.lat)/2,lon:(a.lon+b.lon)/2};
+ const slopeOn=$("avoidSlope").checked,rockOn=$("avoidRock").checked;
+ const rawRisk=(a.risk+b.risk)/2;
+ const risk=Math.round(Math.min(99,Math.max(8,rawRisk-(slopeOn?8:0)-(rockOn?5:0)+Math.abs(a.lat-b.lat)*.08)));
+ const km=distance(a,b),waypoints=[a,midpoint,b];
+ route={start:a.name,end:b.name,distance_km:+km.toFixed(1),risk_index:risk,waypoints:waypoints.map(p=>({latitude:+p.lat.toFixed(2),longitude:+p.lon.toFixed(2)})),constraints:{avoid_steep_terrain:slopeOn,minimize_rocky_zones:rockOn},disclaimer:"Illustrative route and heuristic risk index only. Not validated for operational use."};
+ $("routeResult").classList.remove("hidden");$("routeDistance").textContent=km.toFixed(0)+" km";$("routeRisk").textContent=risk+"/100 est.";$("routeStops").textContent="3";
+ $("routeStatus").textContent=risk>=70?"REVIEW":risk>=40?"DRAFT":"LOWER RISK";
+ $("routeAdvice").textContent=risk>=70?"This draft crosses regions with higher illustrative terrain concern. Review high-resolution elevation and imagery before considering a traverse.":risk>=40?"A draft traverse is ready. Compare local slope, rock abundance, lighting and communications data before selecting a real path.":"This draft has a lower illustrative risk index. It still requires validation against authoritative terrain and environmental datasets.";
+ redraw();
+ refineRouteWithTerrain(a,b,slopeOn);
+}
+let routeToken=0;
+function setRouteMode(text,cls){const e=$("routeMode");e.textContent=text;e.className="route-mode"+(cls?" "+cls:"");}
+function drawProfile(r){
+ const svg=$("routeProfile"),T=r.profile.terrain_route,S=r.profile.straight_line;
+ const all=T.concat(S),maxD=Math.max(...all.map(p=>p[0]))||1,zs=all.map(p=>p[1]),zmin=Math.min(...zs),zmax=Math.max(...zs),zr=(zmax-zmin)||1;
+ const pt=p=>`${(p[0]/maxD*296+2).toFixed(1)},${(54-(p[1]-zmin)/zr*50).toFixed(1)}`;
+ svg.innerHTML=`<polyline points="${S.map(pt).join(" ")}" fill="none" stroke="#8fa0a9" stroke-width="1.3" stroke-dasharray="4 3" vector-effect="non-scaling-stroke"/><polyline points="${T.map(pt).join(" ")}" fill="none" stroke="#e8935e" stroke-width="1.8" vector-effect="non-scaling-stroke"/>`;
+ svg.classList.remove("hidden");
+ const cap=$("routeProfileCap");cap.classList.remove("hidden");
+ cap.textContent=`Elevation profile, ${Math.round(zmin).toLocaleString("en-US")} to ${Math.round(zmax).toLocaleString("en-US")} m · solid = terrain path, dashed = straight line · ${(r.grid.cell_size_m/1000).toFixed(1)} km grid`;
+}
+function applyTerrainRoute(r){
+ const t=r.terrain_route,syn=r.dataset&&r.dataset.synthetic;
+ Object.assign(route,{terrain_based:true,path:r.path,distance_km:t.distance_km,
+  waypoints:r.waypoints.map(w=>({latitude:w.latitude,longitude:w.longitude,elevation_m:w.elevation_m})),
+  terrain:{method:r.method,result_type:r.result_type,parameters:r.parameters,grid:r.grid,terrain_route:t,straight_line:r.straight_line,improvement:r.improvement,dataset:r.dataset,notes:r.notes},
+  disclaimer:"Terrain-aware path from NASA MOLA DEM at grid scale; risk index remains a heuristic estimate. Not validated for operational use."});
+ $("routeDistance").textContent=Math.round(t.distance_km).toLocaleString("en-US")+" km";
+ $("routeStops").textContent=route.waypoints.length;
+ setRouteMode((syn?"SYNTHETIC TEST DATA · ":"NASA-DERIVED · ")+`terrain-based path from MOLA DEM (${r.result_type})`,syn?"warn":"ok");
+ $("routeMaxSlope").textContent=t.max_slope_deg.toFixed(1)+"°";
+ $("routeGain").textContent="+"+t.elevation_gain_m.toLocaleString("en-US")+" m";
+ const pct=r.improvement.cost_reduction_pct;$("routeSaving").textContent=pct>0.05?"−"+pct.toFixed(0)+"%":"same";
+ $("routeTerrainStats").classList.remove("hidden");drawProfile(r);redraw();
+}
+async function refineRouteWithTerrain(a,b,steep){
+ const token=++routeToken;
+ ["routeTerrainStats","routeProfile","routeProfileCap"].forEach(id=>$(id).classList.add("hidden"));
+ setRouteMode("Checking terrain backend…");
+ await backendReady;if(token!==routeToken)return;
+ if(backend.state!=="ready"){setRouteMode(backend.state==="nodem"?"STRAIGHT-LINE DRAFT · backend is running but the DEM file is missing":"STRAIGHT-LINE DRAFT · terrain-based routing needs the backend (offline)","warn");return}
+ setRouteMode("Computing terrain-based path from NASA MOLA DEM…");
+ try{
+  const r=await apiGet("/api/route",{from_lat:a.lat,from_lon:a.lon,to_lat:b.lat,to_lon:b.lon,avoid_steep:steep?1:0},90000);
+  if(token!==routeToken)return;applyTerrainRoute(r);
+ }catch(e){if(token===routeToken)setRouteMode(`STRAIGHT-LINE DRAFT · terrain routing failed: ${e.message}`,"warn")}
+}
+function exportRoute(){
+ if(!route)return;const payload={project:"Martian Map",challenge:"NASA Space Apps 2026 — Interplanetary Survival Guide: Martian Map",created_utc:new Date().toISOString(),selected_region:selected.name,route,site_reference:sites.map(s=>({name:s.name,latitude:s.lat,longitude:s.lon,illustrative_risk_score:s.risk,elevation_m:s.elevData&&s.elevData.status==="live"?s.elevData.value:null,elevation_source:s.elevData&&s.elevData.status==="live"?s.elevData.source:"not retrieved (offline reference only)",dem_slope_deg:s.elevData&&s.elevData.backend?s.elevData.detail.slope_deg:null,elevation_retrieval:s.elevData&&s.elevData.backend?"raster sampling (backend)":(s.elevData&&s.elevData.status==="live"?"live image-service query":"static approximate reference"),reference_elevation_m_approx:s.elev_m,context:s.context})),data_limitations:"The map background and hazard overlays are prototype visualizations. Site coordinates and mission context are reference information; risk scores and route are heuristic examples, not official NASA products or operational guidance.",data_provenance:{nasa_data:["Basemap tiles: NASA Mars Trek WMTS (MGS MOLA colorized relief; Viking MDIM 2.1 color mosaic)","Site elevation: retrieved live at each site's coordinates from a NASA/USGS MOLA-derived DEM image service (see elevation_source per site); rounded reference values are used only if the live query fails and are labelled as such"],estimated_data:["Slope, rock and thermal scores","Terrain risk score and route risk index","Draft route geometry"],datasets:[{name:"Mars MGS MOLA Global Color Shaded Relief 463m",resolution:"128 px/deg, ~463 m/px",url:"https://astrogeology.usgs.gov/search/map/mars_mgs_mola_global_color_shaded_relief_463m",use:"basemap imagery (live tiles via NASA Trek WMTS)"},{name:"Viking MDIM 2.1 Colorized Global Mosaic",resolution:"~232 m/px",url:"https://trek.nasa.gov/tiles/Mars/EQ/Viking_MDIM21_ClrMosaic_global_232m/1.0.0/WMTSCapabilities.xml",use:"alternative basemap (live tiles)"},{name:"Mars MGS MOLA DEM 463m",resolution:"128 px/deg, ~463 m/px, vertical uncertainty >= 3 m",url:"https://astrogeology.usgs.gov/search/map/mars_mgs_mola_dem_463m",use:"site elevation (live point query; static approximate reference only if the query fails)"}],coordinate_matching:"Site latitude/longitude sent to the DEM image service identify operation; returns the single ~463 m pixel covering the point (no interpolation).",risk_formula:"route risk = mean(endpoint risk) - 8 if avoid steep - 5 if minimize rocky + 0.08*abs(lat difference), rounded, limited to 8-99; NASA data is not an input"},references:["https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=mars","https://mars.nasa.gov/mars2020/","https://pds.nasa.gov/","https://astrogeology.usgs.gov/","https://trek.nasa.gov/mars/"]};
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="martian-map-mission-plan.json";a.click();URL.revokeObjectURL(url);
+}
+$("addStart").addEventListener("click",()=>{$("startSite").value=selected.id;$("endSite").value=sites.find(s=>s.id!==selected.id).id;});
+$("planRoute").addEventListener("click",makeRoute);$("exportPlan").addEventListener("click",exportRoute);
+$("clearRoute").addEventListener("click",()=>{route=null;$("routeResult").classList.add("hidden");redraw()});
+["layerSites","layerSlope","layerRock","layerThermal"].forEach(id=>$(id).addEventListener("change",redraw));
+$("zoomIn").addEventListener("click",()=>{zoom=Math.min(1.7,zoom+.12);$("marsMap").style.transform=`scale(${zoom})`});
+$("zoomOut").addEventListener("click",()=>{zoom=Math.max(.8,zoom-.12);$("marsMap").style.transform=`scale(${zoom})`});
+$("resetView").addEventListener("click",()=>{zoom=1;$("marsMap").style.transform="scale(1)"});
+$("mapViewport").addEventListener("wheel",e=>{e.preventDefault();zoom=Math.max(.8,Math.min(1.7,zoom+(e.deltaY<0?.06:-.06)));$("marsMap").style.transform=`scale(${zoom})`},{passive:false});
+$("aboutBtn").addEventListener("click",()=>$("aboutDialog").showModal());$("closeAbout").addEventListener("click",()=>$("aboutDialog").close());
+$("aboutDialog").addEventListener("click",e=>{if(e.target===$("aboutDialog"))$("aboutDialog").close()});
+
+/* ---- NASA Mars Trek basemap (WMTS, equirectangular) ---- */
+const TREK="https://trek.nasa.gov/tiles/Mars/EQ/";
+const BASEMAPS={
+ mola:{layer:"Mars_MGS_MOLA_ClrShade_merge_global_463m",label:"MARS · NASA MOLA ELEVATION",credit:"IMAGERY: NASA/JPL-Caltech/USGS · MOLA",caption:"NASA data: MGS MOLA colorized shaded relief (463 m/pixel). Colour encodes measured elevation from about −8.2 km (purple/blue) to +21.2 km (white) around the Martian datum."},
+ viking:{layer:"Viking_MDIM21_ClrMosaic_global_232m",label:"MARS · NASA VIKING COLOR MOSAIC",credit:"IMAGERY: NASA/JPL-Caltech/USGS · VIKING",caption:"NASA data: Viking Orbiter MDIM 2.1 color mosaic (232 m/pixel) showing surface appearance, not elevation."},
+ illustrative:{layer:null,label:"MARS · ILLUSTRATIVE MAP",credit:"STYLIZED GRAPHIC · NOT NASA DATA",caption:"Illustrative stylized background from the original prototype. Not real planetary imagery."}
+};
+const TILE_ZOOM=3; // 2^(z+1) columns x 2^z rows; lower to 2 for fewer requests
+let bmState={token:0,cfg:BASEMAPS.mola,total:0,loaded:0,failed:0,timedOut:false,timer:null};
+function setMapStatus(kind,text){const e=$("mapStatus");e.className="map-status "+kind;e.textContent=text;}
+function applyBasemapStatus(){
+ const st=bmState,cfg=st.cfg;
+ if(!cfg.layer){setMapStatus("est","Illustrative basemap selected · not NASA imagery");return}
+ const done=st.loaded+st.failed;
+ if(st.loaded===0&&(st.failed===st.total||st.timedOut)){
+  setMapStatus("fallback","Illustrative fallback active · NASA imagery unavailable");
+  $("mapLabel").textContent="MARS · ILLUSTRATIVE FALLBACK";$("mapCredit").textContent="STYLIZED GRAPHIC · NOT NASA DATA";
+  $("basemapCaption").textContent="NASA tiles could not be loaded (offline or service unavailable), so the original illustrative background is shown. It is not real planetary imagery.";
+  return;
+ }
+ // some NASA tiles arrived: restore NASA labels
+ $("mapLabel").textContent=cfg.label;$("mapCredit").textContent=cfg.credit;$("basemapCaption").textContent=cfg.caption;
+ if(done<st.total)setMapStatus("load",`Loading NASA imagery… ${st.loaded}/${st.total} tiles`);
+ else if(st.failed===0)setMapStatus("ok","NASA imagery loaded");
+ else setMapStatus("partial",`NASA imagery partly loaded (${st.loaded}/${st.total} tiles) · illustrative fallback fills gaps`);
+}
+function drawBasemap(key){
+ const cfg=BASEMAPS[key]||BASEMAPS.mola,g=$("tileLayer");g.innerHTML="";
+ $("mapLabel").textContent=cfg.label;$("mapCredit").textContent=cfg.credit;$("basemapCaption").textContent=cfg.caption;
+ clearTimeout(bmState.timer);
+ const token=bmState.token+1,cols=2**(TILE_ZOOM+1),rows=2**TILE_ZOOM,w=1200/cols,h=600/rows;
+ bmState={token,cfg,total:cfg.layer?cols*rows:0,loaded:0,failed:0,timedOut:false,timer:null};
+ applyBasemapStatus();
+ if(!cfg.layer)return;
+ bmState.timer=setTimeout(()=>{if(bmState.token===token){bmState.timedOut=true;applyBasemapStatus()}},15000);
+ for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+  const im=el("image",{x:c*w,y:r*h,width:w+.6,height:h+.6,preserveAspectRatio:"none",href:`${TREK}${cfg.layer}/1.0.0/default/default028mm/${TILE_ZOOM}/${r}/${c}.jpg`},g);
+  im.addEventListener("load",()=>{if(bmState.token===token){bmState.loaded++;applyBasemapStatus()}});
+  im.addEventListener("error",()=>{im.remove();if(bmState.token===token){bmState.failed++;applyBasemapStatus()}}); // illustrative background shows through
+ }
+}
+$("basemapSelect").addEventListener("change",e=>drawBasemap(e.target.value));
+
+
+/* ---- Backend client (Flask + NASA MOLA DEM raster) ---- */
+const API_BASE=(typeof window.MARTIAN_API_BASE==="string")?window.MARTIAN_API_BASE:(location.protocol==="file:"?"http://127.0.0.1:5000":"");
+const backend={state:"checking",info:null};
+let backendReady=Promise.resolve();
+async function apiGet(path,params,timeout){
+ const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),timeout||15000);
+ try{
+  const q=new URLSearchParams(params||{}).toString();
+  const r=await fetch(`${API_BASE}${path}${q?"?"+q:""}`,{signal:ctl.signal});
+  let j=null;try{j=await r.json()}catch(_){}
+  if(!r.ok)throw new Error((j&&j.error)||`HTTP ${r.status}`);
+  return j;
+ }finally{clearTimeout(t)}
+}
+function updateBackendState(){
+ const e=$("backendState"),n=$("demNote");n.textContent="";
+ if(backend.state==="ready"){
+  const syn=backend.info.dataset.synthetic;
+  e.className="backend-state "+(syn?"warn":"ok");e.textContent=syn?"Backend · SYNTHETIC test raster":"Backend connected · MOLA DEM";
+  if(syn)n.textContent="This backend is serving a synthetic test raster, not NASA data.";
+  const sc=backend.info.dataset.sanity_check;
+  if(sc&&sc.performed&&!sc.passed){e.className="backend-state warn";e.textContent="Backend · DEM FAILED SANITY CHECK";n.textContent=`The raster looks wrong (Olympus max ${sc.olympus_max_m} m, Hellas min ${sc.hellas_min_m} m; expected ${sc.expected}). Check units and orientation before trusting elevations.`}
+ }else if(backend.state==="nodem"){
+  e.className="backend-state warn";e.textContent="Backend running · DEM missing";
+  n.textContent=(backend.info&&backend.info.error||"DEM not found")+" "+(backend.info&&backend.info.hint||"");
+ }else if(backend.state==="offline"){
+  e.className="backend-state off";e.textContent="Backend offline";
+  n.textContent="Using the NASA Trek image service or approximate reference values. Start the backend (python backend/app.py) for raster sampling, DEM slope and terrain routing.";
+ }else{e.className="backend-state";e.textContent="Checking backend…"}
+}
+async function checkBackend(){
+ backend.state="checking";updateBackendState();
+ try{const h=await apiGet("/api/health",{},4000);backend.info=h;backend.state=h.dem_available?"ready":"nodem"}
+ catch(e){backend.state="offline";backend.info=null}
+ updateBackendState();
+}
+/* ---- Live MOLA elevation (ArcGIS ImageServer "identify" at each site's coordinates) ---- */
+const ELEV_SOURCES=[
+ {name:"NASA Mars Trek · MGS MOLA DEM (463 m/px)",url:"https://trek.nasa.gov/mars/trekarcgis/rest/services/Mars_MGS_MOLA_DEM_mosaic_global_463m/ImageServer/identify"},
+ {name:"NASA Mars Trek · MGS MOLA + MEX HRSC blended DEM (200 m/px)",url:"https://trek.nasa.gov/mars/trekarcgis/rest/services/Mars_HRSC_MOLA_BlendDEM_Global_200mp/ImageServer/identify"},
+ {name:"MGS MOLA + MEX HRSC blended DEM (USGS Astrogeology / NASA PDS, Esri-hosted)",url:"https://astro.arcgis.com/arcgis/rest/services/OnMars/MDEM200M/ImageServer/identify"}
+];
+const ELEV_MIN=-9000,ELEV_MAX=22000; // plausible Mars range in metres (MOLA global: about -8,200 to +21,229)
+function fmtM(v){return (v<0?"−":(v>0?"+":""))+Math.abs(Math.round(v)).toLocaleString("en-US")+" m";}
+async function identifyAt(src,lon,lat){
+ const ctl=new AbortController(),t=setTimeout(()=>ctl.abort(),7000);
+ try{
+  const q=new URLSearchParams({geometry:JSON.stringify({x:lon,y:lat}),geometryType:"esriGeometryPoint",returnGeometry:"false",returnCatalogItems:"false",f:"json"});
+  const r=await fetch(`${src.url}?${q}`,{signal:ctl.signal});
+  if(!r.ok)throw new Error("HTTP "+r.status);
+  const j=await r.json();
+  const v=parseFloat(j&&j.value);
+  if(!Number.isFinite(v)||v<ELEV_MIN||v>ELEV_MAX)throw new Error("no valid value");
+  return v;
+ }finally{clearTimeout(t)}
+}
+async function querySource(src,s){
+ for(const lon of [s.lon,((s.lon%360)+360)%360]){ // try -180..180 and 0..360 east longitude conventions
+  try{const v=await identifyAt(src,lon,s.lat);return {status:"live",value:v,source:src.name,query_lon:lon}}
+  catch(e){console.warn("[Martian Map] elevation query failed",s.name,src.name,lon,e.message)}
+ }
+ return null;
+}
+async function fetchElevation(s){
+ s.elevData={status:"loading"};
+ await backendReady;
+ if(backend.state==="ready"){
+  try{
+   const r=await apiGet("/api/elevation",{lat:s.lat,lon:s.lon},15000);
+   s.elevData={status:"live",backend:true,value:r.elevation_m,detail:r,synthetic:!!r.dataset.synthetic,source:r.dataset.name+" (backend raster sampling)"};
+   return;
+  }catch(e){console.warn("[Martian Map] backend elevation failed",s.name,e.message)}
+ }
+ const jobs=ELEV_SOURCES.map(src=>querySource(src,s)); // all sources queried in parallel
+ for(const job of jobs){const r=await job;if(r){s.elevData=r;console.info("[Martian Map] MOLA elevation",s.name,r.value,r.source);return}} // first success in priority order
+ s.elevData={status:"failed"};
+}
+function fmtLatLon(lat,lon){return `${Math.abs(lat).toFixed(2)}°${lat>=0?"N":"S"}, ${Math.abs(lon).toFixed(2)}°${lon>=0?"E":"W"}`}
+function showElevation(s){
+ const d=s.elevData||{status:"loading"},b=$("elevBadge"),NOSLOPE="Not available · start the backend to compute slope from neighbouring cells";
+ $("elevRetry").classList.toggle("hidden",d.status!=="failed");
+ $("demCoords").textContent=`${fmtLatLon(s.lat,s.lon)} (planetocentric)`;
+ if(d.status==="live"&&d.backend){
+  const r=d.detail,syn=d.synthetic;
+  b.className=syn?"badge badge-syn":"badge badge-nasa";b.textContent=syn?"SYNTHETIC TEST DATA":"NASA-DERIVED · RASTER";
+  $("elevationValue").textContent=fmtM(d.value);
+  $("elevationNote").textContent=syn?"Synthetic test raster · not NASA data":`NASA-derived numerical elevation · ${r.dataset.name} · ${s.elevation}`;
+  $("demSource").textContent=syn?r.dataset.name:`${r.dataset.name} · ${r.dataset.publisher}`;
+  $("demRetrieval").textContent=`Raster sampling · row ${r.pixel.row}, col ${r.pixel.col} · ${r.dataset.resolution_m_per_px} m/px, no interpolation`;
+  $("demSlope").textContent=r.slope_deg==null?"No data at this cell or its neighbours":`${r.slope_deg.toFixed(1)}° · ${r.slope_method}${syn?"":" · NASA-derived"}`;
+ }else if(d.status==="live"){
+  b.className="badge badge-nasa";b.textContent="NASA-DERIVED · LIVE";
+  $("elevationValue").textContent=fmtM(d.value);
+  $("elevationNote").textContent=`NASA-derived numerical elevation · ${d.source} · ${s.elevation}`;
+  $("demSource").textContent=d.source;$("demRetrieval").textContent="Live image-service query (pixel value at the point)";$("demSlope").textContent=NOSLOPE;
+ }else if(d.status==="failed"){
+  b.className="badge badge-ref";b.textContent="REFERENCE · APPROXIMATE";
+  $("elevationValue").textContent=s.elev_label;
+  $("elevationNote").textContent=`NASA-derived reference · approximate (not dynamically retrieved; live query failed) · ${s.elevation}`;
+  $("demSource").textContent="Static reference value (NASA MOLA-derived, rounded)";$("demRetrieval").textContent="Not retrieved · all NASA queries failed";$("demSlope").textContent=NOSLOPE;
+ }else{
+  b.className="badge badge-load";b.textContent="LOADING…";
+  $("elevationValue").textContent="—";$("elevationNote").textContent="Querying NASA MOLA-derived elevation…";
+  $("demSource").textContent="Loading…";$("demRetrieval").textContent="Loading…";$("demSlope").textContent="Loading…";
+ }
+}
+async function loadElevations(list){
+ await Promise.all(list.map(s=>fetchElevation(s).then(()=>{if(selected===s)showElevation(s)})));
+}
+$("elevRetry").addEventListener("click",()=>{backendReady=checkBackend();showElevation({...selected,elevData:{status:"loading"}});loadElevations([selected])});
+fillSelects();drawBasemap($("basemapSelect").value);renderSiteList();selectSite(sites[0]);backendReady=checkBackend();loadElevations(sites);makeRoute();
+
+  </script>
+</body>
+</html>
