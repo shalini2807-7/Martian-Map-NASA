@@ -26,3 +26,6 @@ WHAT'S IN THE APP
 LIMITS
 Risk, rock and thermal scores are heuristic demonstration values, not NASA hazard products.
 Terrain routes use grid-scale slopes only. Not for operational use.
+
+Use of Generative AI
+ChatGPT was used as an AI-assisted development tool for coding guidance, debugging, troubleshooting, and understanding implementation concepts during the development of Martian Map. The team reviewed, adapted, tested, and integrated the project components.
